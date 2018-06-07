@@ -435,8 +435,8 @@ func PdhGetFormattedCounterArrayLong(hCounter PDH_HCOUNTER, lpdwBufferSize *uint
 //	Example:
 // 		var c win.PDH_COUNTER_PATH_ELEMENTS
 //		var b uint32
-//		if ret := win.PdhParseCounterPath("\Processor(_Total)\% Processor Time", nil, &b); ret == win_pdh.PDH_MORE_DATA {
-//			if ret = win.PdhParseCounterPath(counter.Path, &c, &b); ret == win_pdh.ERROR_SUCCESS {
+//		if ret := win.PdhParseCounterPath("\Processor(_Total)\% Processor Time", nil, &b); ret == win.PDH_MORE_DATA {
+//			if ret = win.PdhParseCounterPath(counter.Path, &c, &b); ret == win.ERROR_SUCCESS {
 //				fmt.Printf("MachineName: %s\n", win.UTF16PtrToString(c.MachineName))
 //				fmt.Printf("ObjectName: %s\n", win.UTF16PtrToString(c.ObjectName))
 //				fmt.Printf("InstanceName: %s\n", win.UTF16PtrToString(c.InstanceName))
