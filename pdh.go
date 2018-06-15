@@ -433,14 +433,18 @@ func PdhGetFormattedCounterArrayLong(hCounter PDH_HCOUNTER, lpdwBufferSize *uint
 // 		PDH_MORE_DATA and sets this parameter to the required buffer size.
 //
 //	Example:
-// 		var c win.PDH_COUNTER_PATH_ELEMENTS
+//		path := `\Processor(_Total)\% Processor Time`
 //		var b uint32
-//		if ret := win.PdhParseCounterPath("\Processor(_Total)\% Processor Time", nil, &b); ret == win.PDH_MORE_DATA {
-//			if ret = win.PdhParseCounterPath(counter.Path, &c, &b); ret == win.ERROR_SUCCESS {
-//				fmt.Printf("MachineName: %s\n", win.UTF16PtrToString(c.MachineName))
-//				fmt.Printf("ObjectName: %s\n", win.UTF16PtrToString(c.ObjectName))
-//				fmt.Printf("InstanceName: %s\n", win.UTF16PtrToString(c.InstanceName))
-//				fmt.Printf("CounterName: %s\n", win.UTF16PtrToString(c.CounterName))
+//		if ret := win.PdhParseCounterPath(path, nil, &b); ret == win.PDH_MORE_DATA {
+//			buf := make([]byte, int(b))
+//			if ret = win.PdhParseCounterPath(path, &buf[0], &b); ret == win.ERROR_SUCCESS {
+//				p := *(*win.PDH_COUNTER_PATH_ELEMENTS)(unsafe.Pointer(&buf[0]))
+//				fmt.Printf("MachineName: %s\n", win.UTF16PtrToString(p.MachineName))
+//				fmt.Printf("ObjectName: %s\n", win.UTF16PtrToString(p.ObjectName))
+//				fmt.Printf("InstanceName: %s\n", win.UTF16PtrToString(p.InstanceName))
+//				fmt.Printf("ParentInstance: %s\n", win.UTF16PtrToString(p.ParentInstance))
+//				fmt.Printf("InstanceIndex: %d\n", p.InstanceIndex)
+//				fmt.Printf("CounterName: %s\n", win.UTF16PtrToString(p.CounterName))
 //			} else {
 //				// Failed to parse counter
 //				// Possible error codes: PDH_INVALID_ARGUMENT, PDH_INVALID_PATH, PDH_MEMORY_ALLOCATION_FAILURE
@@ -449,7 +453,7 @@ func PdhGetFormattedCounterArrayLong(hCounter PDH_HCOUNTER, lpdwBufferSize *uint
 //			// Failed to obtain buffer info
 //			// Possible error codes: PDH_INVALID_ARGUMENT, PDH_INVALID_PATH, PDH_MEMORY_ALLOCATION_FAILURE
 //		}
-func PdhParseCounterPath(szFullPathBuffer string, pCounterPathElements *PDH_COUNTER_PATH_ELEMENTS, pdwBufferSize *uint32) uint32 {
+func PdhParseCounterPath(szFullPathBuffer string, pCounterPathElements *byte, pdwBufferSize *uint32) uint32 {
 	ptxt, _ := syscall.UTF16PtrFromString(szFullPathBuffer)
 
 	ret, _, _ := pdh_ParseCounterPathW.Call(
